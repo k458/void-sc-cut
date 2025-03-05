@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -22,26 +23,24 @@ public class GatewayController {
     private final SecurityService securityService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserEntity>> users() {
-        ResponseEntity<List<UserEntity>> response = securityService.getAllUsers();
-        if (response.getStatusCode() == HttpStatus.OK){
-            return response;
-        }
-        return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+    public Mono<ResponseEntity<List<UserEntity>>> users() {
+        return securityService.getAllUsers();
     }
 
     @GetMapping("/items")
-    public ResponseEntity<String> getItems(@RequestHeader("Authorization") String authHeader){
+    public Mono<ResponseEntity<String>> getItems(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        ResponseEntity<Long> response = securityService.verifyToken(token);
-        if (response.getStatusCode() == HttpStatus.OK){
-            return new ResponseEntity<>(""+response.getBody(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Fail", HttpStatus.FORBIDDEN);
+        return securityService.verifyToken(token)
+                .map(value -> {
+                    return ResponseEntity.ok("Verified ID: " + value.getBody());
+                })
+                .onErrorResume(error -> {
+                    return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token verification failed"));
+                });
     }
 
     @PostMapping("/createUser")
-    public ResponseEntity<String> createUser(@RequestBody UserNamePassword unp) {
+    public Mono<ResponseEntity<String>> createUser(@RequestBody UserNamePassword unp) {
         System.out.println(unp.getName()+" "+unp.getPassword());
         return securityService.createUser(unp);
     }
