@@ -31,8 +31,11 @@ public class GatewayController {
     public Mono<ResponseEntity<String>> getItems(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         return securityService.verifyToken(token)
-                .map(value -> {
-                    return ResponseEntity.ok("Verified ID: " + value.getBody());
+                .flatMap(value -> {
+                    return securityService.createUser(new UserNamePassword("User#"+value.getBody(), "pisword"))  // assuming anotherService.performAction() returns a Mono<ResponseEntity<String>>
+                            .map(response -> {
+                                return ResponseEntity.ok("Success: " + response.getBody());
+                            });
                 })
                 .onErrorResume(error -> {
                     return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token verification failed"));
