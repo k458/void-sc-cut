@@ -1,0 +1,5 @@
+spring:
+  security:
+    enable: false
+  application:
+    name: void-gateway

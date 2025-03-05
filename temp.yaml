@@ -1,0 +1,35 @@
+  void-db-characters-db:
+    image: void-db
+    networks:
+      - void-network
+    depends_on: 
+      - void-db-users-db
+    volumes:
+      - ./void-db/characters:/var/lib/postgresql/data
+      
+  void-db-dungeons-db:
+    image: void-db
+    networks:
+      - void-network
+    depends_on: 
+      - void-db-users-db
+    volumes:
+      - ./void-db/dungeons:/var/lib/postgresql/data
+      
+  void-db-hubs-db-db:
+    image: void-db
+    networks:
+      - void-network
+    depends_on: 
+      - void-db-users-db
+    volumes:
+      - ./void-db/hubs:/var/lib/postgresql/data
+  
+  void-db-enemies-db:
+    image: void-db
+    networks:
+      - void-network
+    depends_on: 
+      - void-db-users-db
+    volumes:
+      - ./void-db/enemies:/var/lib/postgresql/data

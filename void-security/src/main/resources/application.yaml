@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: void-security
+  datasource:
+    url: jdbc:postgresql://localhost:5432/void-db
+    username: u
+    password: p
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

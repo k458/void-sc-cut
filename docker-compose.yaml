@@ -1,0 +1,59 @@
+services:
+
+  eureka-server:
+    image: eureka-server
+    container_name: eureka-server
+    networks:
+      - void-network
+      
+  void-db-users:
+    image: void-db
+    networks:
+      - void-network
+    volumes:
+      - ./void-db/users:/var/lib/postgresql/data
+    container_name: void-db-users
+    restart: unless-stopped 
+      
+  void-users:
+    image: void-users
+    networks:
+      - void-network
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    depends_on: 
+      - eureka-server
+      - void-db-users
+    container_name: void-users
+    restart: unless-stopped 
+           
+  void-gateway:
+    image: void-gateway
+    ports:
+      - "8090:8080"
+    networks:
+      - void-network
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    depends_on: 
+      - eureka-server
+    container_name: void-gateway
+    restart: unless-stopped 
+    
+    void-security:
+    image: void-security
+    networks:
+      - void-network
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    depends_on: 
+      - eureka-server
+    container_name: void-security
+    restart: unless-stopped 
+      
+networks:
+  void-network:
+    driver: bridge
+    name: void-network
+    
+    
