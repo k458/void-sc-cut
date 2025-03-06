@@ -32,7 +32,7 @@ public class GatewayController {
         String token = authHeader.replace("Bearer ", "");
         return securityService.verifyToken(token)
                 .flatMap(value -> {
-                    return securityService.createUser(new UserNamePassword("User#"+value.getBody(), "pisword"))  // assuming anotherService.performAction() returns a Mono<ResponseEntity<String>>
+                    return securityService.createUser(new UserNamePassword("User#"+value.getBody(), "pisword"))
                             .map(response -> {
                                 return ResponseEntity.ok("Success: " + response.getBody());
                             });

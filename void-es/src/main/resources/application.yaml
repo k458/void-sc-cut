@@ -1,9 +1,11 @@
 spring:
-  security:
-    enable: false
   application:
-    name: void-gateway
+    name: void-es
+server:
+  port: 8761
 eureka:
   client:
     serviceUrl:
       defaultZone: http://void-es:8761/eureka
+    register-with-eureka: false
+    fetch-registry: false

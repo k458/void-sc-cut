@@ -33,3 +33,15 @@
       - void-db-users-db
     volumes:
       - ./void-db/enemies:/var/lib/postgresql/data
+      
+  void-users:
+    image: void-users
+    networks:
+      - void-network
+    environment:
+      - EUREKA_SERVER_URL=http://void-es:8761/eureka
+    depends_on: 
+      - eureka-server
+      - void-db-users
+    container_name: void-users
+    restart: unless-stopped 

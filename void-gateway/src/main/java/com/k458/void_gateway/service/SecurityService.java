@@ -3,10 +3,10 @@ package com.k458.void_gateway.service;
 import com.k458.void_gateway.model.UserEntity;
 import com.k458.void_gateway.model.UserNamePassword;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -18,7 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SecurityService {
 
-    private final WebClient webClient = WebClient.builder().baseUrl("http://localhost:8081").build();
+    @LoadBalanced
+    private final WebClient webClient = WebClient.builder().baseUrl("http://void-security:8080").build();
 
     public Mono<ResponseEntity<List<UserEntity>>> getAllUsers() {
         return webClient.get()
@@ -30,9 +31,8 @@ public class SecurityService {
     }
 
     public Mono<ResponseEntity<Long>> verifyToken(String token) {
-        return webClient.post()
-                .uri("/verifyToken")
-                .bodyValue(token)
+        return webClient.get()
+                .uri("/verifyToken/"+token)
                 .retrieve()
                 .bodyToMono(Long.class)
                 .map(ResponseEntity::ok)
