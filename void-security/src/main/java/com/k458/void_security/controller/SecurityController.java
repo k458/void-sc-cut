@@ -27,7 +27,13 @@ public class SecurityController {
     @GetMapping("/verifyToken/{token}")
     public ResponseEntity<Long> verifyToken(@PathVariable("token") String token) {
         System.out.println("Token "+token+" verified");
-        return new ResponseEntity<>(1L, HttpStatus.OK);
+        try {
+            Long tokenLong = Long.parseLong(token);
+            return new ResponseEntity<>(tokenLong, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(1L, HttpStatus.OK);
+        }
     }
 
     @PostMapping("/recreateToken")

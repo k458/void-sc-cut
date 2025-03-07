@@ -2,16 +2,14 @@ package com.k458.void_gateway.controller;
 
 import com.k458.void_gateway.model.UserEntity;
 import com.k458.void_gateway.model.UserNamePassword;
+import com.k458.void_gateway.service.GameControllerService;
 import com.k458.void_gateway.service.SecurityService;
+import com.k458.void_gateway.service.UserBottleneckService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -21,6 +19,41 @@ import java.util.List;
 public class GatewayController {
 
     private final SecurityService securityService;
+    private final UserBottleneckService userBottleneckService;
+    private final GameControllerService gameControllerService;
+
+    @GetMapping("/newGame")
+    public Mono<ResponseEntity<String>> newGame(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return securityService.verifyToken(token)
+                .flatMap(verifyTokenResponse -> {
+                    if (verifyTokenResponse.getStatusCode() != HttpStatus.OK){
+                        return Mono.just(ResponseEntity.badRequest().body("Token verification failed"));
+                    }
+                    Long id = verifyTokenResponse.getBody();
+                    boolean allowed = userBottleneckService.tryAllowFor(id);
+                    if (!allowed) {
+                        return Mono.just(ResponseEntity.badRequest().body("Other request from the user is in process"));
+                    }
+                    return gameControllerService.newGame(id)
+                            .flatMap( newGameResponse -> {
+                                if (newGameResponse.getStatusCode() == HttpStatus.OK){
+                                    return Mono.just(ResponseEntity.ok("New Game"));
+                                }
+                                return Mono.just(ResponseEntity.internalServerError().body("Failed to start new game"));
+                            })
+                            .doFinally(signalType -> {
+                                userBottleneckService.finishedFor(id);
+                            })
+                            .onErrorResume(error -> {
+                                userBottleneckService.finishedFor(id);
+                                return Mono.just(ResponseEntity.internalServerError().body("Unknown error"));
+                            });
+                })
+                .onErrorResume(error -> {
+                    return Mono.just(ResponseEntity.internalServerError().body("Failed to retrieve user id"));
+                });
+    }
 
     @GetMapping("/users")
     public Mono<ResponseEntity<List<UserEntity>>> users() {
@@ -28,17 +61,35 @@ public class GatewayController {
     }
 
     @GetMapping("/items")
-    public Mono<ResponseEntity<String>> getItems(@RequestHeader("Authorization") String authHeader) {
+    public Mono<ResponseEntity<?>> getItems(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         return securityService.verifyToken(token)
-                .flatMap(value -> {
-                    return securityService.createUser(new UserNamePassword("User#"+value.getBody(), "pisword"))
-                            .map(response -> {
-                                return ResponseEntity.ok("Success: " + response.getBody());
+                .flatMap(verifyTokenResponse -> {
+                    if (verifyTokenResponse.getStatusCode() != HttpStatus.OK){
+                        return Mono.just(ResponseEntity.badRequest().body("Token verification failed"));
+                    }
+                    Long id = verifyTokenResponse.getBody();
+                    boolean allowed = userBottleneckService.tryAllowFor(id);
+                    if (!allowed) {
+                        return Mono.just(ResponseEntity.badRequest().body("Other request from the user is in process"));
+                    }
+                    return gameControllerService.getItemsDTO(id)
+                            .flatMap(items -> {
+                                if (items.getStatusCode() == HttpStatus.OK){
+                                    return Mono.just(ResponseEntity.ok(items));
+                                }
+                                return Mono.just(ResponseEntity.badRequest().body("Failed to retrieve items"));
+                            })
+                            .doFinally(signalType -> {
+                                userBottleneckService.finishedFor(id);
+                            })
+                            .onErrorResume(error -> {
+                                userBottleneckService.finishedFor(id);
+                                return Mono.just(ResponseEntity.internalServerError().body("Unknown error"));
                             });
                 })
                 .onErrorResume(error -> {
-                    return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token verification failed"));
+                    return Mono.just(ResponseEntity.internalServerError().body("Failed to retrieve user id"));
                 });
     }
 
