@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.k458</groupId>
-	<artifactId>void-characters</artifactId>
+	<artifactId>void-hubs</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>void-characters</name>
+	<name>void-hubs</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -39,10 +39,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.cloud</groupId>-->
-<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -99,7 +99,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>void-characters</finalName>
+		<finalName>void-hubs</finalName>
 	</build>
 
 </project>

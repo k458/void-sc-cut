@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: void-dungeons
+  datasource:
+    url: jdbc:postgresql://void-db-dungeons:5432/void-db
+    username: u
+    password: p
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://void-es:8761/eureka
