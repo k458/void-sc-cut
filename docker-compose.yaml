@@ -25,6 +25,15 @@ services:
       - ./void-db/resources:/var/lib/postgresql/data
     container_name: void-db-resources
     restart: unless-stopped 
+    
+  void-db-items:
+    image: void-db
+    networks:
+      - void-network
+    volumes:
+      - ./void-db/resources:/var/lib/postgresql/data
+    container_name: void-db-items
+    restart: unless-stopped 
            
   void-gateway:
     image: void-gateway
@@ -54,6 +63,16 @@ services:
       - void-es
       - void-db-resources
     container_name: void-resources
+    restart: unless-stopped 
+  
+  void-items:
+    image: void-items
+    networks:
+      - void-network
+    depends_on: 
+      - void-es
+      - void-db-items
+    container_name: void-items
     restart: unless-stopped 
     
   void-controller:

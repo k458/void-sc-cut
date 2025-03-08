@@ -13,6 +13,6 @@ public class GameController {
 
     @PostMapping("/newGame/{id}")
     public Mono<ResponseEntity<String>> newGame(@PathVariable("id") Long id){
-        return Mono.just(ResponseEntity.ok("New Game"));
+        return Mono.just(ResponseEntity.ok("New game for user with id: "+id));
     }
 }

@@ -36,12 +36,12 @@ public class GatewayController {
                         return Mono.just(ResponseEntity.badRequest().body("Other request from the user is in process"));
                     }
                     return gameControllerService.newGame(id)
-                            .flatMap( newGameResponse -> {
-                                if (newGameResponse.getStatusCode() == HttpStatus.OK){
-                                    return Mono.just(ResponseEntity.ok("New Game"));
-                                }
-                                return Mono.just(ResponseEntity.internalServerError().body("Failed to start new game"));
-                            })
+//                            .flatMap( newGameResponse -> {
+//                                if (newGameResponse.getStatusCode() == HttpStatus.OK){
+//                                    return Mono.just(ResponseEntity.ok(newGameResponse.getBody()));
+//                                }
+//                                return Mono.just(ResponseEntity.badRequest().body(newGameResponse.getBody()));
+//                            })
                             .doFinally(signalType -> {
                                 userBottleneckService.finishedFor(id);
                             })
