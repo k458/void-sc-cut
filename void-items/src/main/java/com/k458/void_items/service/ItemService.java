@@ -14,11 +14,11 @@ public class ItemService {
     private final LocalIndexCounterService localIndexCounterService;
     private final IItemRepo repo;
 
-    public List<ItemEntity> getItemsByUserId(Long id){
+    public List<ItemEntity> getByUserId(Long id){
         return repo.findByUserId(id);
     }
 
-    public void saveItem(ItemEntity itemEntity){
+    public void save(ItemEntity itemEntity){
         if (itemEntity.getId() == null){
             itemEntity.setId(globalIndexCounterService.getGlobalIndexNext());
         }
@@ -28,7 +28,7 @@ public class ItemService {
         repo.save(itemEntity);
     }
 
-    public void deleteItem(Long userId, Long itemId){
+    public void delete(Long userId, Long itemId){
         ItemEntity itm = repo.findByUserIdAndItemId(userId, itemId).orElse(null);
         if (itm != null){
             globalIndexCounterService.addRecycleIndex(itm.getId());
