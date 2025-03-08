@@ -16,7 +16,6 @@ public class LocalIndexCounterEntity {
     private Long lastIndex;
 
     @Column(columnDefinition = "bigint[]")
-    @ElementCollection
     private List<Long> recycleIndexes;
 
     public void addRecycleIndex(Long index){

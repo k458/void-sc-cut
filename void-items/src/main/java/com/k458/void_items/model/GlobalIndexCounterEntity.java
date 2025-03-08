@@ -2,6 +2,8 @@ package com.k458.void_items.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
@@ -16,7 +18,6 @@ public class GlobalIndexCounterEntity {
     private Long lastIndex;
 
     @Column(columnDefinition = "bigint[]")
-    @ElementCollection
     private List<Long> recycleIndexes;
 
     public void addRecycleIndex(Long index){

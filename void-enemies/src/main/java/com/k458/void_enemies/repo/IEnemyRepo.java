@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface IEnemyRepo extends JpaRepository<EnemyEntity, Long> {
     List<EnemyEntity> findByUserId(Long userId);
-    Optional<EnemyEntity> findByUserIdAndItemId(Long userId, Long enemyId);
-    void deleteByUserIdAndItemId(Long userId, Long enemyId);
+    Optional<EnemyEntity> findByUserIdAndEnemyId(Long userId, Long enemyId);
+    void deleteByUserIdAndEnemyId(Long userId, Long enemyId);
 }

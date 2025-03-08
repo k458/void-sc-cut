@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ICharacterRepo extends JpaRepository<CharacterEntity, Long> {
     List<CharacterEntity> findByUserId(Long userId);
-    Optional<CharacterEntity> findByUserIdAndItemId(Long userId, Long characterId);
-    void deleteByUserIdAndItemId(Long userId, Long characterId);
+    Optional<CharacterEntity> findByUserIdAndCharacterId(Long userId, Long characterId);
+    void deleteByUserIdAndCharacterId(Long userId, Long characterId);
 }

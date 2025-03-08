@@ -29,11 +29,11 @@ public class CharacterService {
     }
 
     public void delete(Long userId, Long characterId){
-        CharacterEntity ch = repo.findByUserIdAndItemId(userId, characterId).orElse(null);
+        CharacterEntity ch = repo.findByUserIdAndCharacterId(userId, characterId).orElse(null);
         if (ch != null){
             globalIndexCounterService.addRecycleIndex(ch.getId());
             localIndexCounterService.addRecycleIndex(userId, characterId);
-            repo.deleteByUserIdAndItemId(userId, characterId);
+            repo.deleteByUserIdAndCharacterId(userId, characterId);
         }
     }
 }

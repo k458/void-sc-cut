@@ -29,11 +29,11 @@ public class EnemyService {
     }
 
     public void delete(Long userId, Long enemyId){
-        EnemyEntity enm = repo.findByUserIdAndItemId(userId, enemyId).orElse(null);
+        EnemyEntity enm = repo.findByUserIdAndEnemyId(userId, enemyId).orElse(null);
         if (enm != null){
             globalIndexCounterService.addRecycleIndex(enm.getId());
             localIndexCounterService.addRecycleIndex(userId, enemyId);
-            repo.deleteByUserIdAndItemId(userId, enemyId);
+            repo.deleteByUserIdAndEnemyId(userId, enemyId);
         }
     }
 }

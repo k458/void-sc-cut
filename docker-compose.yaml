@@ -16,7 +16,7 @@ services:
     volumes:
       - ./void-db/resources:/var/lib/postgresql/data
     container_name: void-db-resources
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-db-dungeons:
     image: void-db
@@ -25,7 +25,7 @@ services:
     volumes:
       - ./void-db/dungeons:/var/lib/postgresql/data
     container_name: void-db-dungeons
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-db-rooms:
     image: void-db
@@ -34,7 +34,7 @@ services:
     volumes:
       - ./void-db/rooms:/var/lib/postgresql/data
     container_name: void-db-rooms
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-db-hubs:
     image: void-db
@@ -43,7 +43,7 @@ services:
     volumes:
       - ./void-db/hubs:/var/lib/postgresql/data
     container_name: void-db-hubs
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
     
   void-db-items:
@@ -53,7 +53,7 @@ services:
     volumes:
       - ./void-db/resources:/var/lib/postgresql/data
     container_name: void-db-items
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-db-characters:
     image: void-db
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./void-db/characters:/var/lib/postgresql/data
     container_name: void-db-characters
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-db-enemies:
     image: void-db
@@ -71,7 +71,7 @@ services:
     volumes:
       - ./void-db/enemies:/var/lib/postgresql/data
     container_name: void-db-enemies
-    restart: unless-stopped 
+    #restart: unless-stopped 
       
       
   void-db-users:
@@ -81,7 +81,7 @@ services:
     volumes:
       - ./void-db/users:/var/lib/postgresql/data
     container_name: void-db-users
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
     
   void-resources:
@@ -92,7 +92,7 @@ services:
       - void-es
       - void-db-resources
     container_name: void-resources
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-dungeons:
     image: void-dungeons
@@ -102,7 +102,7 @@ services:
       - void-es
       - void-db-dungeons
     container_name: void-dungeons
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-rooms:
     image: void-rooms
@@ -112,7 +112,7 @@ services:
       - void-es
       - void-db-rooms
     container_name: void-rooms
-    restart: unless-stopped
+    #restart: unless-stopped
     
   void-hubs:
     image: void-hubs
@@ -122,7 +122,7 @@ services:
       - void-es
       - void-db-hubs
     container_name: void-hubs
-    restart: unless-stopped
+    #restart: unless-stopped
     
     
   void-items:
@@ -133,7 +133,7 @@ services:
       - void-es
       - void-db-items
     container_name: void-items
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-characters:
     image: void-characters
@@ -143,7 +143,7 @@ services:
       - void-es
       - void-db-characters
     container_name: void-characters
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-enemies:
     image: void-enemies
@@ -153,7 +153,7 @@ services:
       - void-es
       - void-db-enemies
     container_name: void-enemies
-    restart: unless-stopped
+    #restart: unless-stopped
            
            
   void-gateway:
@@ -165,7 +165,7 @@ services:
     depends_on: 
       - void-es
     container_name: void-gateway
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
   void-security:
     image: void-security
@@ -174,7 +174,7 @@ services:
     depends_on: 
       - void-es
     container_name: void-security
-    restart: unless-stopped 
+    #restart: unless-stopped 
     
     
   void-controller:
@@ -184,7 +184,7 @@ services:
     depends_on: 
       - void-es
     container_name: void-controller
-    restart: unless-stopped 
+    #restart: unless-stopped 
       
 networks:
   void-network:
