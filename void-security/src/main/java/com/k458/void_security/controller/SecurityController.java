@@ -4,9 +4,11 @@ import com.k458.void_security.config.Variables;
 import com.k458.void_security.model.TokenTime;
 import com.k458.void_security.model.UserEntity;
 import com.k458.void_security.model.UserNamePassword;
+import com.k458.void_security.service.JwtService;
 import com.k458.void_security.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class SecurityController {
+    private final JwtService jwtService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
@@ -26,25 +29,43 @@ public class SecurityController {
 
     @GetMapping("/verifyToken/{token}")
     public ResponseEntity<Long> verifyToken(@PathVariable("token") String token) {
-        if (token.equals("aaa")){
-            return ResponseEntity.ok(1L);
+        try{
+            String userIds = jwtService.parseToken(token);
+            Long userId = Long.parseLong(userIds);
+            UserEntity entity = userService.getById(userId);
+            if (entity != null){
+                return ResponseEntity.ok(userId);
+            }
+        } catch (Exception e){
         }
         return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/recreateToken/{token}")
     public ResponseEntity<TokenTime> recreateToken(@PathVariable("token") String token) {
-        TokenTime tokenTime = new TokenTime("aaa", Variables.tokenLifeTime);
-        return ResponseEntity.ok(tokenTime);
+        try{
+            String userIds = jwtService.parseToken(token);
+            Long userId = Long.parseLong(userIds);
+            UserEntity entity = userService.getById(userId);
+            if (entity != null){
+                String tokenNew = jwtService.createToken(userId.toString());
+                return ResponseEntity.ok(new TokenTime(tokenNew, Variables.tokenLifeTime));
+            }
+        } catch (Exception e){
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<TokenTime> login(@RequestBody UserNamePassword unp) {
-        UserEntity entity = userService.getByNameAndPassword(unp.getName(), passwordEncoder.encode(unp.getPassword()));
+        UserEntity entity = userService.getByName(unp.getName());
         if (entity != null) {
-            TokenTime tokenTime = new TokenTime("aaa", Variables.tokenLifeTime);
-            return ResponseEntity.ok(tokenTime);
+            if (!passwordEncoder.matches(unp.getPassword(), entity.getPassword())) return ResponseEntity.badRequest().build();
+            String tokenNew = jwtService.createToken(entity.getId().toString());
+            return ResponseEntity.ok(new TokenTime(tokenNew, Variables.tokenLifeTime));
         }
+//        System.out.println("---------------------------------------notfound"+unp.toString());
+//        System.out.println(":::"+passwordEncoder.encode(unp.getPassword()));
         return ResponseEntity.badRequest().build();
     }
 
@@ -53,9 +74,11 @@ public class SecurityController {
         UserEntity entity = userService.getByName(unp.getName());
         if (entity == null) {
             UserEntity newUser = new UserEntity(unp.getName(), passwordEncoder.encode(unp.getPassword()), "USER");
-            userService.save(newUser);
-            TokenTime tokenTime = new TokenTime("aaa", Variables.tokenLifeTime);
-            return ResponseEntity.ok(tokenTime);
+            newUser = userService.save(newUser);
+            //System.out.println("---------------------------------------"+newUser.toString());
+            String tokenNew = jwtService.createToken(newUser.getId().toString());
+            //System.out.println("---------------------------------------"+newUser.toString());
+            return ResponseEntity.ok(new TokenTime(tokenNew, Variables.tokenLifeTime));
         }
         return ResponseEntity.badRequest().build();
     }

@@ -24,7 +24,7 @@ public class ProgressionController {
         dto.setResourceEntity(resService.get(id));
         return ResponseEntity.ok(dto);
     }
-    @PostMapping("/{id}}")
+    @PostMapping("/{id}")
     public ResponseEntity<Void> save(@PathVariable("id") Long id, @RequestBody ProgressionDto dto){
         HubEntity hubEntity = dto.getHubEntity();
         if (hubEntity != null){

@@ -19,6 +19,10 @@ public class UserService {
         return userRepo.findAll();
     }
 
+    public UserEntity getById(Long id) {
+        return userRepo.findById(id).orElse(null);
+    }
+
     public UserEntity getByNameAndPassword(String name, String password) {
         return userRepo.findByNameAndPassword(name, password).orElse(null);
     }
