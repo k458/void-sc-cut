@@ -9,70 +9,23 @@ services:
       - "8761:8761"
       
       
-  void-db-resources:
+  void-db-progression:
     image: void-db
     networks:
       - void-network
     volumes:
-      - ./void-db/resources:/var/lib/postgresql/data
-    container_name: void-db-resources
+      - ./void-db/progression:/var/lib/postgresql/data
+    container_name: void-db-progression
     #restart: unless-stopped 
     
-  void-db-dungeons:
+  void-db-creatures:
     image: void-db
     networks:
       - void-network
     volumes:
-      - ./void-db/dungeons:/var/lib/postgresql/data
-    container_name: void-db-dungeons
+      - ./void-db/creatures:/var/lib/postgresql/data
+    container_name: void-db-creatures
     #restart: unless-stopped 
-    
-  void-db-rooms:
-    image: void-db
-    networks:
-      - void-network
-    volumes:
-      - ./void-db/rooms:/var/lib/postgresql/data
-    container_name: void-db-rooms
-    #restart: unless-stopped 
-    
-  void-db-hubs:
-    image: void-db
-    networks:
-      - void-network
-    volumes:
-      - ./void-db/hubs:/var/lib/postgresql/data
-    container_name: void-db-hubs
-    #restart: unless-stopped 
-    
-    
-  void-db-items:
-    image: void-db
-    networks:
-      - void-network
-    volumes:
-      - ./void-db/resources:/var/lib/postgresql/data
-    container_name: void-db-items
-    #restart: unless-stopped 
-    
-  void-db-characters:
-    image: void-db
-    networks:
-      - void-network
-    volumes:
-      - ./void-db/characters:/var/lib/postgresql/data
-    container_name: void-db-characters
-    #restart: unless-stopped 
-    
-  void-db-enemies:
-    image: void-db
-    networks:
-      - void-network
-    volumes:
-      - ./void-db/enemies:/var/lib/postgresql/data
-    container_name: void-db-enemies
-    #restart: unless-stopped 
-      
       
   void-db-users:
     image: void-db
@@ -84,77 +37,25 @@ services:
     #restart: unless-stopped 
     
     
-  void-resources:
-    image: void-resources
+  void-progression:
+    image: void-progression
     networks:
       - void-network
     depends_on: 
       - void-es
-      - void-db-resources
-    container_name: void-resources
+      - void-db-progression
+    container_name: void-progression
     #restart: unless-stopped 
     
-  void-dungeons:
-    image: void-dungeons
+  void-creatures:
+    image: void-creatures
     networks:
       - void-network
     depends_on: 
       - void-es
-      - void-db-dungeons
-    container_name: void-dungeons
-    #restart: unless-stopped 
-    
-  void-rooms:
-    image: void-rooms
-    networks:
-      - void-network
-    depends_on: 
-      - void-es
-      - void-db-rooms
-    container_name: void-rooms
-    #restart: unless-stopped
-    
-  void-hubs:
-    image: void-hubs
-    networks:
-      - void-network
-    depends_on: 
-      - void-es
-      - void-db-hubs
-    container_name: void-hubs
-    #restart: unless-stopped
-    
-    
-  void-items:
-    image: void-items
-    networks:
-      - void-network
-    depends_on: 
-      - void-es
-      - void-db-items
-    container_name: void-items
-    #restart: unless-stopped 
-    
-  void-characters:
-    image: void-characters
-    networks:
-      - void-network
-    depends_on: 
-      - void-es
-      - void-db-characters
-    container_name: void-characters
-    #restart: unless-stopped 
-    
-  void-enemies:
-    image: void-enemies
-    networks:
-      - void-network
-    depends_on: 
-      - void-es
-      - void-db-enemies
-    container_name: void-enemies
-    #restart: unless-stopped
-           
+      - void-db-creatures
+    container_name: void-creatures
+    #restart: unless-stopped    
            
   void-gateway:
     image: void-gateway
@@ -175,7 +76,6 @@ services:
       - void-es
     container_name: void-security
     #restart: unless-stopped 
-    
     
   void-controller:
     image: void-controller
