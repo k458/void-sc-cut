@@ -19,18 +19,18 @@ public class ProgressionService {
                 .retrieve()
                 .bodyToMono(ProgressionDto.class)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                .onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
+                .defaultIfEmpty(ResponseEntity.badRequest().build())
+                .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
-//    public Mono<ResponseEntity<HubEntity>> save(Long id, HubEntity entity) {
-//        return webClient.post()
-//                .uri("/"+id)
-//                .bodyValue(entity)
-//                .retrieve()
-//                .bodyToMono(HubEntity.class)
-//                .map(ResponseEntity::ok)
-//                .defaultIfEmpty(ResponseEntity.badRequest().build())
-//                .onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
-//    }
+    public Mono<ResponseEntity<Void>> save(Long id, ProgressionDto dto) {
+        return webClient.post()
+                .uri("/"+id)
+                .bodyValue(dto)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build())
+                .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
+    }
 }

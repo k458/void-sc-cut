@@ -1,4 +1,4 @@
-package com.k458.void_controller.model.progression;
+package com.k458.void_gateway.model.progression;
 
 import lombok.Data;
 

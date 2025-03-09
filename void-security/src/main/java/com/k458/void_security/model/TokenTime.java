@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TokenTime {
     String token;
-    int time;
+    Integer time;
 }

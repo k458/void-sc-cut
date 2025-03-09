@@ -21,46 +21,42 @@ public class SecurityController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserEntity>> users() {
-        return new ResponseEntity<>( userService.getAllUsers(), HttpStatus.OK);
+        return ResponseEntity.ok(userService.getAll());
     }
 
     @GetMapping("/verifyToken/{token}")
     public ResponseEntity<Long> verifyToken(@PathVariable("token") String token) {
-        System.out.println("Token "+token+" verified");
-        try {
-            Long tokenLong = Long.parseLong(token);
-            return new ResponseEntity<>(tokenLong, HttpStatus.OK);
+        if (token.equals("aaa")){
+            return ResponseEntity.ok(1L);
         }
-        catch (Exception e){
-            return new ResponseEntity<>(1L, HttpStatus.OK);
-        }
+        return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/recreateToken")
-    public ResponseEntity<TokenTime> recreateToken(@RequestBody String token) {
-        TokenTime tt = new TokenTime("aaa", Variables.tokenLifeTime);
-        return new ResponseEntity<>(tt, HttpStatus.OK);
+    @GetMapping("/recreateToken/{token}")
+    public ResponseEntity<TokenTime> recreateToken(@PathVariable("token") String token) {
+        TokenTime tokenTime = new TokenTime("aaa", Variables.tokenLifeTime);
+        return ResponseEntity.ok(tokenTime);
     }
 
-    @PostMapping("/createToken")
-    public ResponseEntity<TokenTime> createToken(@RequestBody UserNamePassword unp) {
-        UserEntity userEntity = userService.getUserByNameAndPassword(unp.getName(), passwordEncoder.encode(unp.getPassword())).orElse(null);
-        if (userEntity != null) {
-            TokenTime tt = new TokenTime("aaa", Variables.tokenLifeTime);
-            return new ResponseEntity<>(tt, HttpStatus.OK);
+    @PostMapping("/login")
+    public ResponseEntity<TokenTime> login(@RequestBody UserNamePassword unp) {
+        UserEntity entity = userService.getByNameAndPassword(unp.getName(), passwordEncoder.encode(unp.getPassword()));
+        if (entity != null) {
+            TokenTime tokenTime = new TokenTime("aaa", Variables.tokenLifeTime);
+            return ResponseEntity.ok(tokenTime);
         }
-        return new ResponseEntity<>(new TokenTime(), HttpStatus.FORBIDDEN);
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/createUser")
-    public ResponseEntity<String> createUser(@RequestBody UserNamePassword unp) {
-        System.out.println(unp.getName()+" "+unp.getPassword());
-        UserEntity userEntity = userService.getUserByName(unp.getName()).orElse(null);
-        if (userEntity == null) {
+    public ResponseEntity<TokenTime> createUser(@RequestBody UserNamePassword unp) {
+        UserEntity entity = userService.getByName(unp.getName());
+        if (entity == null) {
             UserEntity newUser = new UserEntity(unp.getName(), passwordEncoder.encode(unp.getPassword()), "USER");
-            String name = userService.addUser(newUser).getName();
-            return new ResponseEntity<>("User "+name+" was created", HttpStatus.OK);
+            userService.save(newUser);
+            TokenTime tokenTime = new TokenTime("aaa", Variables.tokenLifeTime);
+            return ResponseEntity.ok(tokenTime);
         }
-        return new ResponseEntity<>("User with name "+unp.getName()+" already exists", HttpStatus.FORBIDDEN);
+        return ResponseEntity.badRequest().build();
     }
 }

@@ -13,33 +13,24 @@ public class CharacterService {
     @LoadBalanced
     private final WebClient webClient = WebClient.builder().baseUrl("http://void-creatures:8080/characters").build();
 
-    public Mono<ResponseEntity<CharactersDto>> getAll(Long id) {
+    public Mono<ResponseEntity<CharactersDto>> get(Long id) {
         return webClient.get()
                 .uri("/"+id)
                 .retrieve()
                 .bodyToMono(CharactersDto.class)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                .onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
-    }
-
-    public Mono<ResponseEntity<CharacterEntity>> save(Long id, CharacterEntity entity) {
-        return webClient.post()
-                .uri("/"+id)
-                .bodyValue(entity)
-                .retrieve()
-                .bodyToMono(CharacterEntity.class)
-                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.badRequest().build())
                 .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
-    public Mono<ResponseEntity<Void>> delete(Long id, Long localId) {
-        return webClient.delete()
-                .uri("/delete/"+id+"/"+localId)
+    public Mono<ResponseEntity<Void>> save(Long id, CharactersDto dto) {
+        return webClient.post()
+                .uri("/"+id)
+                .bodyValue(dto)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .map(ResponseEntity::ok)
-                .onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
+                .defaultIfEmpty(ResponseEntity.badRequest().build())
+                .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 }

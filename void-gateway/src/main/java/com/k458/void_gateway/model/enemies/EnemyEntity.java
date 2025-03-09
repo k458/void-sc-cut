@@ -1,13 +1,14 @@
-package com.k458.void_controller.model.characters;
+package com.k458.void_gateway.model.enemies;
 
 import lombok.Data;
 
 @Data
-public class CharacterEntity {
+public class EnemyEntity {
     private Long id;
     private Long userId;
     private Long localId;
     private String name;
     private String type;
     private Integer level;
+    private Integer hpLeft;
 }

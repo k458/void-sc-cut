@@ -1,5 +1,6 @@
 package com.k458.void_controller.service.creatures;
 
+import com.k458.void_controller.model.characters.CharactersDto;
 import com.k458.void_controller.model.enemies.EnemiesDto;
 import com.k458.void_controller.model.enemies.EnemyEntity;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -13,33 +14,24 @@ public class EnemyService {
     @LoadBalanced
     private final WebClient webClient = WebClient.builder().baseUrl("http://void-creatures:8080/enemies").build();
 
-    public Mono<ResponseEntity<EnemiesDto>> getAll(Long id) {
+    public Mono<ResponseEntity<EnemiesDto>> get(Long id) {
         return webClient.get()
                 .uri("/"+id)
                 .retrieve()
                 .bodyToMono(EnemiesDto.class)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                .onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
-    }
-
-    public Mono<ResponseEntity<EnemyEntity>> save(Long id, EnemyEntity entity) {
-        return webClient.post()
-                .uri("/"+id)
-                .bodyValue(entity)
-                .retrieve()
-                .bodyToMono(EnemyEntity.class)
-                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.badRequest().build())
                 .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
-    public Mono<ResponseEntity<Void>> delete(Long id, Long localId) {
-        return webClient.delete()
-                .uri("/delete/"+id+"/"+localId)
+    public Mono<ResponseEntity<Void>> save(Long id, EnemiesDto dto) {
+        return webClient.post()
+                .uri("/"+id)
+                .bodyValue(dto)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .map(ResponseEntity::ok)
-                .onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
+                .defaultIfEmpty(ResponseEntity.badRequest().build())
+                .onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 }

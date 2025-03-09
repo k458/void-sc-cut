@@ -16,4 +16,10 @@ public class HubEntity {
     private Boolean isActive;
     @Column
     private String name;
+    @Column
+    private Integer building1;
+    @Column
+    private Integer building2;
+    @Column
+    private Integer building3;
 }

@@ -21,23 +21,5 @@ public class CharacterEntity {
     @Column
     private String type;
     @Column
-    private Integer posX;
-    @Column
-    private Integer posY;
-    @Column
-    private Integer hpLeft;
-    @Column
-    private Integer actionLeft;
-    @Column
-    private Integer moveLeft;
-    @Column
-    private Integer speed;
-    @Column
-    private Integer speedRolled;
-    @Column
-    private Boolean acted;
-    @Column
     private Integer level;
-    @Column
-    private Boolean isFielded;
 }

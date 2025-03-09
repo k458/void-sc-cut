@@ -1,5 +1,6 @@
 package com.k458.void_creatures.service.enemies;
 
+import com.k458.void_creatures.model.enemies.EnemiesDto;
 import com.k458.void_creatures.model.enemies.EnemyEntity;
 import com.k458.void_creatures.repo.enemies.IEnemyRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,31 +19,22 @@ public class EnemyService {
         return repo.findByUserId(id);
     }
 
-    public EnemyEntity save(EnemyEntity entity){
-        if (entity.getId() == null){
-            Long userId = entity.getUserId();
-            Long localId = entity.getLocalId();
-            if (userId != null && localId != null){
-                EnemyEntity overwrite = repo.findByUserIdAndLocalId(userId, localId).orElse(null);
-                if (overwrite != null){
-                    entity.setId(overwrite.getId());
-                }
-            } else {
-                entity.setId(globalIndexCounterService.getGlobalIndexNext());
-            }
+    public void save(Long id, EnemiesDto dto){
+        purge(id);
+        List<EnemyEntity> list = dto.getData();
+        for(EnemyEntity entity : list){
+            entity.setUserId(id);
+            entity.setId(globalIndexCounterService.getGlobalIndexNext());
+            entity.setLocalId(localIndexCounterService.getLocalIndexNext(id));
+            repo.save(entity);
         }
-        if (entity.getLocalId() == null){
-            entity.setLocalId(localIndexCounterService.getLocalIndexNext(entity.getUserId()));
-        }
-        return repo.save(entity);
     }
-
-    public void delete(Long userId, Long localId){
-        EnemyEntity e = repo.findByUserIdAndLocalId(userId, localId).orElse(null);
-        if (e != null){
-            globalIndexCounterService.addRecycleIndex(e.getId());
-            localIndexCounterService.addRecycleIndex(userId, localId);
-            repo.deleteByUserIdAndLocalId(userId, localId);
+    private void purge(Long userId){
+        List<EnemyEntity> list = repo.findByUserId(userId);
+        for (EnemyEntity entity : list){
+            globalIndexCounterService.addRecycleIndex(entity.getId());
+            localIndexCounterService.addRecycleIndex(userId, entity.getLocalId());
+            repo.deleteByUserIdAndLocalId(userId, entity.getLocalId());
         }
     }
 }

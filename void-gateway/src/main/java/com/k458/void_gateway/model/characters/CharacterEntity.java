@@ -1,4 +1,4 @@
-package com.k458.void_controller.model.characters;
+package com.k458.void_gateway.model.characters;
 
 import lombok.Data;
 

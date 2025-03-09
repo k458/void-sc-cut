@@ -15,22 +15,19 @@ public class UserService {
     private final IUserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    public List<UserEntity> getAllUsers() {
+    public List<UserEntity> getAll() {
         return userRepo.findAll();
     }
 
-    public Optional<UserEntity> getUserByNameAndPassword(String name, String password) {
-        UserEntity userEntity = userRepo.findByNameAndPassword(name, password).orElse(null);
-        return Optional.ofNullable(userEntity);
+    public UserEntity getByNameAndPassword(String name, String password) {
+        return userRepo.findByNameAndPassword(name, password).orElse(null);
     }
 
-    public Optional<UserEntity> getUserByName(String name) {
-        UserEntity userEntity = userRepo.findByName(name).orElse(null);
-        return Optional.ofNullable(userEntity);
+    public UserEntity getByName(String name) {
+        return userRepo.findByName(name).orElse(null);
     }
 
-    public UserEntity addUser(UserEntity userEntity){
-        userRepo.save(userEntity);
-        return userEntity;
+    public UserEntity save(UserEntity entity){
+        return userRepo.save(entity);
     }
 }

@@ -1,5 +1,6 @@
 package com.k458.void_gateway.service;
 
+import com.k458.void_gateway.model.TokenTime;
 import com.k458.void_gateway.model.UserEntity;
 import com.k458.void_gateway.model.UserNamePassword;
 import lombok.RequiredArgsConstructor;
@@ -30,21 +31,40 @@ public class SecurityService {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
+    public Mono<ResponseEntity<TokenTime>> recreateToken(String token) {
+        return webClient.get()
+                .uri("/recreateToken/"+token)
+                .retrieve()
+                .bodyToMono(TokenTime.class)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
+    }
+
     public Mono<ResponseEntity<Long>> verifyToken(String token) {
         return webClient.get()
                 .uri("/verifyToken/"+token)
                 .retrieve()
                 .bodyToMono(Long.class)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
-    public Mono<ResponseEntity<String>> createUser(UserNamePassword unp) {
+    public Mono<ResponseEntity<TokenTime>> createUser(UserNamePassword unp) {
         return webClient.post()
                 .uri("/createUser")
                 .bodyValue(unp)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(TokenTime.class)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
+    }
+
+    public Mono<ResponseEntity<TokenTime>> login(UserNamePassword unp) {
+        return webClient.post()
+                .uri("/login")
+                .bodyValue(unp)
+                .retrieve()
+                .bodyToMono(TokenTime.class)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
