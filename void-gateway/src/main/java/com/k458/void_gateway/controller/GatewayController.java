@@ -29,8 +29,9 @@ public class GatewayController {
         return securityService.login(unp).block();
     }
 
-    @GetMapping("/recreateToken/{token}")
-    public ResponseEntity<TokenTime> recreateToken(@PathVariable("token") String token) {
+    @GetMapping("/recreateToken")
+    public ResponseEntity<TokenTime> recreateToken(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
         return securityService.recreateToken(token).block();
     }
 

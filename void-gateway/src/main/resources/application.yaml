@@ -3,6 +3,9 @@ spring:
     enable: false
   application:
     name: void-gateway
+server:
+  ssl:
+    enabled: false
 eureka:
   client:
     serviceUrl:
